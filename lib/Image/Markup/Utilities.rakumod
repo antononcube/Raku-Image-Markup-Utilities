@@ -1,4 +1,3 @@
-
 use HTTP::Tiny;
 use MIME::Base64;
 
@@ -15,46 +14,46 @@ unit module Image::Markup::Utilities;
 #| C<:$width> : Width of the image.
 #| C<:$height> : Width of the image.
 #| Returns a string.
-proto from-base64(Str $from, $to = Whatever, :$width = Whatever, :$height = Whatever, |) is export {*}
+proto image-from-base64(Str $from, $to = Whatever, :$width = Whatever, :$height = Whatever, |) is export {*}
 
-multi from-base64(Str $b is copy,
-                  $to where $to.isa(Whatever) || $to ~~ Str && $to eq 'html' = Whatever,
-                  :$width = Whatever,
-                  :$height = Whatever,
-                  :$alt = Whatever,
-                  :$kind is copy = Whatever,
-                  Bool :$strip-md = True
+multi image-from-base64(Str $b is copy,
+                        $to where $to.isa(Whatever) || $to ~~ Str && $to eq 'html' = Whatever,
+                        :$width = Whatever,
+                        :$height = Whatever,
+                        :$alt = Whatever,
+                        :$kind is copy = Whatever,
+                        Bool :$strip-md = True
         --> Str) is export {
 
     my $prefix = '<img';
-    if $width ~~ Int { $prefix ~= ' width="' ~ $width.Str ~ '"';}
-    if $height ~~ Int { $prefix ~= ' height="' ~ $height.Str ~ '"';}
-    if $alt ~~ Str { $prefix ~= ' alt="' ~ $alt ~ '"';}
+    if $width ~~ Int { $prefix ~= ' width="' ~ $width.Str ~ '"'; }
+    if $height ~~ Int { $prefix ~= ' height="' ~ $height.Str ~ '"'; }
+    if $alt ~~ Str { $prefix ~= ' alt="' ~ $alt ~ '"'; }
     if $kind.isa(Whatever) || $kind !~~ Str { $kind = 'png'; }
 
     if $strip-md && ($b ~~ / ^ '![](data:image/' \w*? ';base64,' /) {
-        $b = $b.subst(/ ^ '![](data:image/' \w*? ';base64,' /, '').subst( /')' $/, '');
+        $b = $b.subst(/ ^ '![](data:image/' \w*? ';base64,' /, '').subst(/')' $/, '');
     }
 
     my $imgStr = $prefix ~ ' src="data:image/' ~ $kind ~ ';base64,$IMGB64">';
-    return $imgStr.subst('$IMGB64',$b);
+    return $imgStr.subst('$IMGB64', $b);
 }
 
 #============================================================
 # Encode image
 #============================================================
 
-our proto sub encode-image($spec, Str :$type= 'jpeg'-->Str) is epxort {*}
+our proto sub image-encode($spec, Str :$type= 'jpeg'-->Str) is export {*}
 
-multi sub encode-image(Str $spec, Str :$type= 'jpeg'-->Str) {
+multi sub image-encode(Str $spec, Str :$type= 'jpeg'-->Str) {
     if $spec.IO.e {
-        return encode-image($spec.IO, :$type);
+        return image-encode($spec.IO, :$type);
     }
     my $img = MIME::Base64.encode($spec, :oneline);
     return "data:image/$type;base64,$img";
 }
 
-multi sub encode-image(IO::Path $path, Str :$type= 'jpeg'-->Str) {
+multi sub image-encode(IO::Path $path, Str :$type= 'jpeg'-->Str) {
     if $path.e {
         my $data = $path.IO.slurp(:bin);
         my $img = MIME::Base64.encode($data, :oneline);
@@ -68,14 +67,14 @@ multi sub encode-image(IO::Path $path, Str :$type= 'jpeg'-->Str) {
 # Import image
 #===========================================================
 
-our sub import-image($spec, Str :f(:$format) = 'md-image') is export {
+our sub image-import($spec, Str :f(:$format) = 'md-image') is export {
 
     my $data;
     if $spec ~~ / ^ http s? '://' / {
         my $resp = HTTP::Tiny.get: $spec;
         $data = $resp<content>;
     } elsif $spec.IO.e {
-        $data =$spec.IO.slurp(:bin);
+        $data = $spec.IO.slurp(:bin);
     }
 
     my $img2 = MIME::Base64.encode($data, :oneline);
@@ -93,13 +92,13 @@ our sub import-image($spec, Str :f(:$format) = 'md-image') is export {
 # Export image
 #============================================================
 
-our proto sub export-image($path, Str $image, Bool :$createonly = False -->Bool) is export {*}
+our proto sub image-export($path, Str $image, Bool :$createonly = False -->Bool) is export {*}
 
-multi sub export-image(Str $path, Str $image, Bool :$createonly = False -->Bool) {
-    return export-image($path.IO, $image, :$createonly);
+multi sub image-export(Str $path, Str $image, Bool :$createonly = False -->Bool) {
+    return image-export($path.IO, $image, :$createonly);
 }
 
-multi sub export-image(IO::Path $path, Str $image, Bool :$createonly = False-->Bool) {
+multi sub image-export(IO::Path $path, Str $image, Bool :$createonly = False-->Bool) {
 
     my &rg = / ^ '![](data:image/' \w*? ';base64,' /;
     my $img = do if $image ~~ &rg {
