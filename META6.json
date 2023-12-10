@@ -1,0 +1,34 @@
+{
+  "name": "Image::Markup::Utilities",
+  "description": "Raku package for functions that facilitate the import, export, and viewing of images in different Markup types of documents.",
+  "perl": "6.d",
+  "authors": [
+    "Anton Antonov"
+  ],
+  "auth": "zef:antononcube",
+  "version": "0.1.0",
+  "api": "0",
+  "depends": [
+    "HTTP::Tiny:ver<0.2.5>:auth<zef:jjatria>",
+    "MIME::Base64:ver<1.2.3>:auth<zef:raku-community-modules>"
+  ],
+  "build-depends": [],
+  "test-depends": [],
+  "provides": {
+    "Image::Markup::Utilities": "lib/Image/Markup/Utilities.rakumod"
+  },
+  "resources": [
+    "RandomMandala.png"
+  ],
+  "tags": [
+    "base64",
+    "display",
+    "html",
+    "image",
+    "markdown",
+    "markup",
+    "render"
+  ],
+  "source-url": "https://github.com/antononcube/Raku-Image-Markup-Utilities",
+  "license": "Artistic-2.0"
+}
