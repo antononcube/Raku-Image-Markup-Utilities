@@ -14,29 +14,35 @@ unit module Image::Markup::Utilities;
 #| C<:$width> : Width of the image.
 #| C<:$height> : Width of the image.
 #| Returns a string.
-proto image-from-base64(Str $from, $to = Whatever, :$width = Whatever, :$height = Whatever, |) is export {*}
+proto image-from-base64(Str $img-from, $to = Whatever, :$width = Whatever, :$height = Whatever, |) is export {*}
 
-multi image-from-base64(Str $b is copy,
+multi image-from-base64(Str $img-from is copy,
                         $to where $to.isa(Whatever) || $to ~~ Str && $to eq 'html' = Whatever,
                         :$width = Whatever,
                         :$height = Whatever,
                         :$alt = Whatever,
-                        :$kind is copy = Whatever,
-                        Bool :$strip-md = True
+                        :$type is copy = Whatever,
+                        Bool :$strip = True
         --> Str) is export {
 
     my $prefix = '<img';
     if $width ~~ Int { $prefix ~= ' width="' ~ $width.Str ~ '"'; }
     if $height ~~ Int { $prefix ~= ' height="' ~ $height.Str ~ '"'; }
     if $alt ~~ Str { $prefix ~= ' alt="' ~ $alt ~ '"'; }
-    if $kind.isa(Whatever) || $kind !~~ Str { $kind = 'png'; }
+    if $type.isa(Whatever) || $type !~~ Str { $type = 'png'; }
 
-    if $strip-md && ($b ~~ / ^ '![](data:image/' \w*? ';base64,' /) {
-        $b = $b.subst(/ ^ '![](data:image/' \w*? ';base64,' /, '').subst(/')' $/, '');
+    # Strip Markdown decoration
+    if $strip && ($img-from ~~ / ^ '![](data:image/' \w*? ';base64,' /) {
+        $img-from = $img-from.subst(/ ^ '![](data:image/' \w*? ';base64,' /).chop;
     }
 
-    my $imgStr = $prefix ~ ' src="data:image/' ~ $kind ~ ';base64,$IMGB64">';
-    return $imgStr.subst('$IMGB64', $b);
+    # String HTML / WWW-POST decoration
+    if $strip && ($img-from ~~ / ^ 'data:image/' \w*? ';base64,' /) {
+        $img-from = $img-from.subst(/ ^ 'data:image/' \w*? ';base64,' /);
+    }
+
+    my $imgRes = $prefix ~ ' src="data:image/' ~ $type ~ ';base64,$IMGB64">';
+    return $imgRes.subst('$IMGB64', $img-from);
 }
 
 #============================================================
