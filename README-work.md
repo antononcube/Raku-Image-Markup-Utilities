@@ -20,12 +20,20 @@ zef install Image::Markup::Utilities;
 
 ## Usage examples
 
-Import an image and display it (in this Markdown file):
+Import an image and display it:
 
-```perl6, results=asis, output-prompt=NONE 
+```perl6, results=asis, output-prompt=NONE, eval=TRUE
 use Image::Markup::Utilities;
-image-import($*CWD ~ '/resources/RandomMandala.png', format => 'md-image')
+my $img = image-import($*CWD ~ '/resources/RandomMandala.png', format => 'asis');
+image-from-base64($img);
 ```
+
+**Remark:** GitHub's Markdown renderer does not display the image imported above, 
+but other Markdown rendering apps, like, One Markdown or Visual Studio Code do show the image.
+
+**Remark:** If this Markdown file is converted into an HTML file, say, with 
+["Markdown::Grammar"](https://raku.land/zef:antononcube/Markdown::Grammar), [AAp3],
+the image is seen any browser.
 
 -------
 
@@ -50,7 +58,12 @@ image-import($*CWD ~ '/resources/RandomMandala.png', format => 'md-image')
 [AAp2] Anton Antonov,
 [WWW::OpenAI Raku package](https://github.com/antononcube/Raku-WWW-OpenAI),
 (2023),
-[GitHub/antononcube](https://github.com/antononcube/)
+[GitHub/antononcube](https://github.com/antononcube/).
+
+[AAp2] Anton Antonov,
+[Markdown::Grammar Raku package](https://github.com/antononcube/Raku-Markdown-Grammar),
+(2023),
+[GitHub/antononcube](https://github.com/antononcube/).
 
 ### Videos
 
