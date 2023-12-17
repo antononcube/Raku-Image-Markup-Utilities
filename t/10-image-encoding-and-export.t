@@ -7,10 +7,10 @@ use Image::Markup::Utilities;
 use Test;
 
 ## 1
-isa-ok image-encode($*CWD ~ '/resources/RandomMandala.png'), Str;
+isa-ok image-encode($*CWD ~ '/resources/RandomMandala.png'), Str:D;
 
 ## 2
-isa-ok image-import($*CWD ~ '/resources/RandomMandala.png'), Str;
+isa-ok image-import($*CWD ~ '/resources/RandomMandala.png'), Str:D;
 
 ## 3
 is
@@ -19,6 +19,7 @@ is
 
 ## 4
 my $img2 = image-import($*CWD ~ '/resources/RandomMandala.png');
-is image-export($*CWD ~ '/resources/RandomMandalaExported.png', $img2), True;
+my $path4 = $*TMPDIR.child("RandomMandalaExported.png");
+is image-export($path4, $img2), $path4;
 
 done-testing;
