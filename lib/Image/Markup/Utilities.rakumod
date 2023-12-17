@@ -98,13 +98,13 @@ our sub image-import($spec, Str :f(:$format) = 'md-image') is export {
 # Export image
 #============================================================
 
-our proto sub image-export($path, Str $image, Bool :$createonly = False -->Bool) is export {*}
+our proto sub image-export($path, Str $image, Bool :$createonly = False) is export {*}
 
-multi sub image-export(Str $path, Str $image, Bool :$createonly = False -->Bool) {
+multi sub image-export(Str $path, Str $image, Bool :$createonly = False) {
     return image-export($path.IO, $image, :$createonly);
 }
 
-multi sub image-export(IO::Path $path, Str $image, Bool :$createonly = False-->Bool) {
+multi sub image-export(IO::Path $path, Str $image, Bool :$createonly = False) {
 
     my &rg = / ^ '![](data:image/' \w*? ';base64,' /;
     my $img = do if $image ~~ &rg {
@@ -118,10 +118,11 @@ multi sub image-export(IO::Path $path, Str $image, Bool :$createonly = False-->B
     try {
         my $fh = $path.open(:bin, :w, create => !$createonly);
         $fh.write($data);
-        return $fh.close;
+        $fh.close;
+        return $path.Str;
     }
     if $! {
         note $!.Str;
-        return False;
+        return Nil;
     }
 }
