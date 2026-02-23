@@ -1,0 +1,5 @@
+Changes of the Raku package "Image::Markup::Utilities".
+
+2026-02-22 0.1.1
+    - Implemented &list-animate-svg for making animations with a list of SVG images.
+      - &list-animate is the "umbrella" sub.
