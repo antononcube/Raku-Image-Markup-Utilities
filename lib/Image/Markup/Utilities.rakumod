@@ -142,15 +142,15 @@ multi sub list-animate(@imgs where @imgs.all ~~ Str:D, *%args) {
 #===========================================================
 
 our sub list-animate-svg(@svgs,
-                         :$duration = Whatever,
+                         :run-time(:dur(:$duration)) = Whatever,
                          :$delay = Whatever,
                          :$fps = Whatever,
-                         :$repeat-count = '1',
+                         :r(:repeat(:$repeat-count)) = 1,
                          :$fill = 'freeze',
-                         :$width = Whatever,
-                         :$height = Whatever,
+                         :w(:$width) = Whatever,
+                         :h(:$height) = Whatever,
                          :$id = 'animatedImage',
-                         :$graph-id-prefix = 'graph'
+                         :id-prefix(:$graph-id-prefix) = 'graph'
         --> Str) is export {
 
     my @items = @svgs.grep(*.defined);
